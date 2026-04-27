@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 연결 허브 - 나만의 작은 출판사</title>
+  <style>
+    :root {
+      --paper: #F6F4F0;
+      --paper-light: #FFFFFF;
+      --paper-dark: #EAE6DF;
+      --ink: #2C2D2B;
+      --ink-soft: #5A5C59;
+      --muted: #8E908B;
+      --green-dark: #234035;
+      --green-light: #35604F;
+      --line: #D1CEC5;
+      --blue: #365D7A;
+      --red: #8B3A3A;
+      --amber: #A86624;
+      --shadow: 0 18px 42px rgba(44, 45, 43, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px clamp(18px, 4vw, 42px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(246, 244, 240, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      color: var(--green-dark);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .desk-link {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 14px;
+      background: var(--paper-light);
+      color: var(--green-dark);
+      font-weight: 800;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .desk-link:hover,
+    .desk-link:focus-visible {
+      background: var(--paper-dark);
+      border-color: var(--green-dark);
+      outline: 3px solid rgba(35, 64, 53, 0.2);
+      outline-offset: 2px;
+    }
+
+    .page {
+      padding: 32px clamp(16px, 4vw, 42px) 42px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--green-dark);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 18px 0 0;
+      color: var(--ink-soft);
+      font-size: clamp(16px, 1.7vw, 20px);
+    }
+
+    .status-strip {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper-light);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .status-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .runtime-now {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--amber);
+      box-shadow: 0 0 0 5px rgba(168, 102, 36, 0.12);
+    }
+
+    .dot.connected {
+      background: var(--green-dark);
+      box-shadow: 0 0 0 5px rgba(35, 64, 53, 0.14);
+    }
+
+    .status-strip p {
+      margin: 0;
+      color: var(--ink-soft);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 360px;
+      min-height: 680px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--paper-light);
+      box-shadow: var(--shadow);
+    }
+
+    .rail,
+    .builder,
+    .routing {
+      min-width: 0;
+    }
+
+    .rail {
+      background: var(--paper-dark);
+      border-right: 1px solid var(--line);
+      padding: 20px;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .provider-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .provider-card {
+      width: 100%;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.56);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .provider-card:hover,
+    .provider-card:focus-visible,
+    .provider-card.active {
+      background: var(--paper-light);
+      border-color: var(--green-dark);
+      outline: none;
+    }
+
+    .provider-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .provider-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .provider-name {
+      font-weight: 900;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 0 8px;
+      background: var(--paper-dark);
+      color: var(--ink-soft);
+      font-size: 0.72rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge.good {
+      background: rgba(35, 64, 53, 0.12);
+      color: var(--green-dark);
+    }
+
+    .badge.warn {
+      background: rgba(168, 102, 36, 0.14);
+      color: var(--amber);
+    }
+
+    .provider-card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .rail-note {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .builder {
+      padding: 28px;
+      background: var(--paper-light);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .panel-header p {
+      max-width: 620px;
+      margin: 8px 0 0;
+      color: var(--ink-soft);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--line);
+      margin-bottom: 24px;
+    }
+
+    .metric {
+      padding: 14px;
+      background: var(--paper);
+    }
+
+    .metric span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
+      gap: 20px;
+    }
+
+    .setup-panel,
+    .test-panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      padding: 18px;
+    }
+
+    .setup-panel h3,
+    .test-panel h3,
+    .routing h2 {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      color: var(--ink-soft);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      background: var(--paper-light);
+      color: var(--ink);
+    }
+
+    .field input:focus-visible,
+    .field select:focus-visible,
+    .action:focus-visible {
+      border-color: var(--green-dark);
+      outline: 3px solid rgba(35, 64, 53, 0.2);
+      outline-offset: 2px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .action {
+      min-height: 44px;
+      border: 1px solid var(--green-dark);
+      border-radius: 8px;
+      padding: 0 14px;
+      background: var(--green-dark);
+      color: var(--paper-light);
+      cursor: pointer;
+      font-weight: 900;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .action:hover {
+      background: var(--green-light);
+    }
+
+    .action.secondary {
+      background: var(--paper-light);
+      color: var(--green-dark);
+    }
+
+    .action.secondary:hover {
+      background: var(--paper-dark);
+    }
+
+    .log {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .log-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .log-mark {
+      width: 8px;
+      height: 8px;
+      margin-top: 8px;
+      border-radius: 999px;
+      background: var(--line);
+      flex: 0 0 auto;
+    }
+
+    .log-line.done .log-mark {
+      background: var(--green-dark);
+    }
+
+    .routing {
+      border-left: 1px solid var(--line);
+      background: var(--paper);
+      padding: 24px;
+    }
+
+    .routing-intro {
+      margin: -4px 0 18px;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+    }
+
+    .role-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .role-row {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper-light);
+      padding: 14px;
+    }
+
+    .role-row strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .role-row select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      background: var(--paper);
+    }
+
+    .route-preview {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper-light);
+      padding: 16px;
+    }
+
+    .route-preview h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+
+    .route-chain {
+      display: grid;
+      gap: 9px;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    .route-chain span {
+      display: block;
+      border-left: 3px solid var(--line);
+      padding-left: 10px;
+    }
+
+    .route-chain span.active {
+      border-left-color: var(--green-dark);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .privacy-note {
+      margin-top: 18px;
+      color: var(--ink-soft);
+      font-size: 0.86rem;
+    }
+
+    @media (max-width: 1160px) {
+      .hero,
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace {
+        overflow: visible;
+      }
+
+      .rail {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .provider-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .routing {
+        border-left: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .role-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .desk-link {
+        width: 100%;
+      }
+
+      .page {
+        padding: 24px 14px 32px;
+      }
+
+      .provider-list,
+      .metric-grid,
+      .setup-grid,
+      .role-list {
+        grid-template-columns: 1fr;
+      }
+
+      .builder,
+      .routing,
+      .rail {
+        padding: 18px;
+      }
+
+      .panel-header {
+        display: block;
+      }
+
+      .actions {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">나만의 작은 출판사</a>
+    <a class="desk-link" href="index.html">제작 데스크로 돌아가기</a>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">AI Runtime Hub</p>
+        <h1 id="pageTitle">책을 만드는 AI들을 먼저 연결합니다.</h1>
+        <p class="lead">
+          OpenClaw, 로컬 에이전트, OAuth 워커, 직접 API를 같은 방식으로 꽂아두고
+          책 제작 단계마다 어떤 AI가 일할지 배정하는 설정 화면입니다.
+        </p>
+      </div>
+      <aside class="status-strip" aria-label="현재 AI 런타임 상태">
+        <span class="status-label">Current Runtime</span>
+        <div class="runtime-now"><span class="dot" id="runtimeDot"></span><span id="runtimeNow">데모 모드</span></div>
+        <p id="runtimeSummary">실제 연결 전에도 제작 데스크는 mock 실행으로 계속 사용할 수 있습니다.</p>
+      </aside>
+    </section>
+
+    <section class="workspace" aria-label="AI 연결 설정 작업 영역">
+      <aside class="rail">
+        <h2 class="section-title">연결 방식</h2>
+        <div class="provider-list" role="list">
+          <button class="provider-card active" type="button" data-provider="openclaw">
+            <span class="provider-head"><span class="provider-name">OpenClaw Local</span><span class="badge good">권장</span></span>
+            <p>사용자의 OpenClaw 환경을 로컬 작업자로 사용합니다.</p>
+          </button>
+          <button class="provider-card" type="button" data-provider="local">
+            <span class="provider-head"><span class="provider-name">Local Agent CLI</span><span class="badge">호스트</span></span>
+            <p>Codex, Claude Code, 기타 CLI를 task bundle로 호출합니다.</p>
+          </button>
+          <button class="provider-card" type="button" data-provider="paperclip">
+            <span class="provider-head"><span class="provider-name">OAuth Worker</span><span class="badge warn">추후</span></span>
+            <p>Paperclip류 서비스가 제공하는 계정 연결 워커를 씁니다.</p>
+          </button>
+          <button class="provider-card" type="button" data-provider="openai">
+            <span class="provider-head"><span class="provider-name">OpenAI API</span><span class="badge">API</span></span>
+            <p>구조화 출력, 검증, 안정 실행이 필요할 때 직접 호출합니다.</p>
+          </button>
+          <button class="provider-card" type="button" data-provider="demo">
+            <span class="provider-head"><span class="provider-name">Demo Runtime</span><span class="badge">무료</span></span>
+            <p>시연과 테스트용 deterministic mock 실행입니다.</p>
+          </button>
+        </div>
+        <p class="rail-note">
+          이 화면은 프론트 시연용입니다. 입력값은 서버로 전송하거나 저장하지 않습니다.
+        </p>
+      </aside>
+
+      <section class="builder" aria-live="polite">
+        <div class="panel-header">
+          <div>
+            <h2 id="providerTitle">OpenClaw Local</h2>
+            <p id="providerDescription">OpenClaw를 BookForge의 외부 작업자처럼 연결합니다. BookForge는 책 상태와 품질 게이트를 계속 소유합니다.</p>
+          </div>
+          <span class="badge good" id="providerBadge">기존 계정 활용</span>
+        </div>
+
+        <div class="metric-grid" aria-label="선택한 연결 방식 요약">
+          <div class="metric"><span>비용</span><strong id="metricCost">기존 OpenClaw 계정</strong></div>
+          <div class="metric"><span>신뢰도</span><strong id="metricReliability">중간-높음</strong></div>
+          <div class="metric"><span>개인정보</span><strong id="metricPrivacy">로컬 작업 우선</strong></div>
+          <div class="metric"><span>무인 실행</span><strong id="metricUnattended">어댑터에 따라 가능</strong></div>
+        </div>
+
+        <div class="setup-grid">
+          <form class="setup-panel" id="setupForm">
+            <h3>연결 설정</h3>
+            <div id="setupFields"></div>
+            <div class="actions">
+              <button class="action" type="button" id="testButton">연결 테스트</button>
+              <button class="action secondary" type="button" id="saveButton">기본 런타임으로 사용</button>
+            </div>
+          </form>
+
+          <aside class="test-panel">
+            <h3>테스트 로그</h3>
+            <div class="log" id="testLog">
+              <div class="log-line"><span class="log-mark"></span><span>연결 방식을 선택하면 필요한 설정을 보여줍니다.</span></div>
+              <div class="log-line"><span class="log-mark"></span><span>테스트는 실제 호출 없이 프론트 상태만 시뮬레이션합니다.</span></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <aside class="routing">
+        <h2>제작 단계 배정</h2>
+        <p class="routing-intro">각 단계에 가장 어울리는 AI 실행 방식을 꽂아둡니다. 나중에 저장 API만 붙이면 실제 라우팅 값으로 쓸 수 있습니다.</p>
+
+        <div class="role-list">
+          <label class="role-row">
+            <strong>메인 기획 에이전트</strong>
+            <select data-role="plan">
+              <option>OpenClaw Local</option>
+              <option>OpenAI API</option>
+              <option>Local Agent CLI</option>
+              <option>Demo Runtime</option>
+            </select>
+          </label>
+          <label class="role-row">
+            <strong>초안 작성 에이전트</strong>
+            <select data-role="draft">
+              <option>OpenClaw Local</option>
+              <option>Local Agent CLI</option>
+              <option>OpenAI API</option>
+              <option>Demo Runtime</option>
+            </select>
+          </label>
+          <label class="role-row">
+            <strong>서브 에이전트 토론</strong>
+            <select data-role="debate">
+              <option>Local Agent CLI</option>
+              <option>OpenClaw Local</option>
+              <option>OpenAI API</option>
+              <option>OAuth Worker</option>
+            </select>
+          </label>
+          <label class="role-row">
+            <strong>품질 검증 에이전트</strong>
+            <select data-role="verify">
+              <option>OpenAI API</option>
+              <option>OpenClaw Local</option>
+              <option>Local Agent CLI</option>
+              <option>Demo Runtime</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="route-preview">
+          <h3>실행 경로 미리보기</h3>
+          <div class="route-chain" id="routePreview"></div>
+        </div>
+
+        <p class="privacy-note">
+          원칙: BookForge가 원고와 품질 판정을 소유하고, 연결된 AI는 작업 묶음에 대한 결과만 돌려줍니다.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const providers = {
+      openclaw: {
+        name: "OpenClaw Local",
+        badge: "기존 계정 활용",
+        badgeClass: "good",
+        description: "OpenClaw를 BookForge의 외부 작업자처럼 연결합니다. BookForge는 책 상태와 품질 게이트를 계속 소유합니다.",
+        cost: "기존 OpenClaw 계정",
+        reliability: "중간-높음",
+        privacy: "로컬 작업 우선",
+        unattended: "어댑터에 따라 가능",
+        fields: [
+          ["profile", "OpenClaw 프로필", "bookforge-writer"],
+          ["command", "실행 명령", "openclaw run --task {task_json_arg} --prompt {prompt_arg} --output {result_arg}"],
+          ["workspace", "작업 폴더", "D:\\\\작업물\\\\나만의 작은 출판사"]
+        ],
+        test: ["OpenClaw 명령 형식을 확인했습니다.", "task bundle 입출력 경로를 준비했습니다.", "연결 가능 상태로 표시했습니다."]
+      },
+      local: {
+        name: "Local Agent CLI",
+        badge: "호스트 실행",
+        badgeClass: "",
+        description: "Codex, Claude Code, 기타 로컬 CLI를 같은 adapter contract로 호출합니다.",
+        cost: "각 도구 계정 사용",
+        reliability: "도구별 차이",
+        privacy: "호스트 작업",
+        unattended: "watch 모드 가능",
+        fields: [
+          ["preset", "어댑터 프리셋", "codex | claude-code | custom"],
+          ["command", "실행 명령", "codex exec --full-auto ..."],
+          ["mode", "실행 모드", "once 또는 watch"]
+        ],
+        test: ["로컬 어댑터 프리셋을 확인했습니다.", "결과 파일 경로를 예약했습니다.", "작업자 대기 상태로 표시했습니다."]
+      },
+      paperclip: {
+        name: "OAuth Worker",
+        badge: "계정 연결",
+        badgeClass: "warn",
+        description: "Paperclip 같은 서비스가 공식 OAuth 워커를 제공할 때 계정 연결 방식으로 사용합니다.",
+        cost: "연결 서비스 정책",
+        reliability: "높음 가능",
+        privacy: "외부 워커 전송",
+        unattended: "서비스 지원 필요",
+        fields: [
+          ["workspace", "워크스페이스", "paperclip-team"],
+          ["callback", "콜백 URL", "http://localhost:3000/api/oauth/callback"],
+          ["scope", "요청 권한", "tasks:run results:read"]
+        ],
+        test: ["OAuth 요청 범위를 점검했습니다.", "콜백 URL 형식을 확인했습니다.", "실제 연결은 백엔드 구현 후 가능합니다."]
+      },
+      openai: {
+        name: "OpenAI API",
+        badge: "직접 API",
+        badgeClass: "",
+        description: "Responses API 기반으로 구조화 출력, 검증, 스트리밍 작업을 안정적으로 실행하는 모드입니다.",
+        cost: "API 사용량 과금",
+        reliability: "높음",
+        privacy: "API 전송",
+        unattended: "가능",
+        fields: [
+          ["apiKey", "API Key", "시연용 입력. 실제 키를 넣지 마세요."],
+          ["model", "기본 모델", "gpt-5.4"],
+          ["reasoning", "검증 reasoning", "medium"]
+        ],
+        test: ["API 키 입력란과 모델 값을 확인했습니다.", "Responses API 요청 형태로 보낼 준비가 됐습니다.", "실제 호출은 서버 저장소 연결 후 활성화합니다."]
+      },
+      demo: {
+        name: "Demo Runtime",
+        badge: "시연용",
+        badgeClass: "good",
+        description: "API 키 없이 화면과 품질 루프를 확인하는 deterministic mock 실행입니다.",
+        cost: "무료",
+        reliability: "테스트 고정",
+        privacy: "전송 없음",
+        unattended: "가능",
+        fields: [
+          ["seed", "데모 시드", "bookforge-demo-01"],
+          ["speed", "응답 속도", "빠름"],
+          ["quality", "검증 시나리오", "1회 반려 후 통과"]
+        ],
+        test: ["데모 시드를 고정했습니다.", "mock 응답 시나리오를 준비했습니다.", "시연 런타임을 사용할 수 있습니다."]
+      }
+    };
+
+    const providerCards = document.querySelectorAll(".provider-card");
+    const setupFields = document.getElementById("setupFields");
+    const testLog = document.getElementById("testLog");
+    const runtimeDot = document.getElementById("runtimeDot");
+    const runtimeNow = document.getElementById("runtimeNow");
+    const runtimeSummary = document.getElementById("runtimeSummary");
+    const routePreview = document.getElementById("routePreview");
+    const roleSelects = document.querySelectorAll(".role-row select");
+    let selectedProvider = "openclaw";
+
+    function renderProvider(id) {
+      selectedProvider = id;
+      const provider = providers[id];
+
+      providerCards.forEach((card) => card.classList.toggle("active", card.dataset.provider === id));
+      document.getElementById("providerTitle").textContent = provider.name;
+      document.getElementById("providerDescription").textContent = provider.description;
+      document.getElementById("providerBadge").textContent = provider.badge;
+      document.getElementById("providerBadge").className = `badge ${provider.badgeClass}`;
+      document.getElementById("metricCost").textContent = provider.cost;
+      document.getElementById("metricReliability").textContent = provider.reliability;
+      document.getElementById("metricPrivacy").textContent = provider.privacy;
+      document.getElementById("metricUnattended").textContent = provider.unattended;
+
+      setupFields.innerHTML = provider.fields.map(([id, label, value]) => `
+        <div class="field">
+          <label for="${id}">${label}</label>
+          <input id="${id}" type="${id === "apiKey" ? "password" : "text"}" value="${id === "apiKey" ? "" : value}" placeholder="${id === "apiKey" ? value : ""}">
+          ${id === "apiKey" ? '<span class="hint">프론트 시연용입니다. 실제 키는 백엔드 보안 저장소에서만 다루는 것이 안전합니다.</span>' : ""}
+        </div>
+      `).join("");
+
+      testLog.innerHTML = `
+        <div class="log-line"><span class="log-mark"></span><span>${provider.name} 설정값을 입력한 뒤 연결 테스트를 실행하세요.</span></div>
+        <div class="log-line"><span class="log-mark"></span><span>이 화면은 실제 외부 서비스로 값을 보내지 않습니다.</span></div>
+      `;
+    }
+
+    function runTest() {
+      const provider = providers[selectedProvider];
+      testLog.innerHTML = provider.test.map((line) => `
+        <div class="log-line done"><span class="log-mark"></span><span>${line}</span></div>
+      `).join("");
+      runtimeDot.classList.add("connected");
+      runtimeNow.textContent = `${provider.name} 테스트 통과`;
+      runtimeSummary.textContent = "아직 실제 저장은 하지 않았지만, 이 연결 방식으로 제작 단계를 배정할 수 있습니다.";
+    }
+
+    function saveRuntime() {
+      const provider = providers[selectedProvider];
+      runtimeDot.classList.add("connected");
+      runtimeNow.textContent = `${provider.name} 기본값`;
+      runtimeSummary.textContent = `${provider.name}을 기본 실행 방식으로 사용하는 상태를 시뮬레이션했습니다.`;
+      testLog.innerHTML += `
+        <div class="log-line done"><span class="log-mark"></span><span>${provider.name} 기본 런타임 상태로 표시했습니다.</span></div>
+      `;
+    }
+
+    function updateRoutePreview() {
+      const labels = {
+        plan: "기획 대화",
+        draft: "초안 작성",
+        debate: "에이전트 토론",
+        verify: "품질 검증"
+      };
+
+      routePreview.innerHTML = Array.from(roleSelects).map((select, index) => `
+        <span class="${index === 0 ? "active" : ""}">${labels[select.dataset.role]} -> ${select.value}</span>
+      `).join("");
+    }
+
+    providerCards.forEach((card) => {
+      card.addEventListener("click", () => renderProvider(card.dataset.provider));
+    });
+
+    document.getElementById("testButton").addEventListener("click", runTest);
+    document.getElementById("saveButton").addEventListener("click", saveRuntime);
+    roleSelects.forEach((select) => select.addEventListener("change", updateRoutePreview));
+
+    renderProvider(selectedProvider);
+    updateRoutePreview();
+  </script>
+</body>
+</html>

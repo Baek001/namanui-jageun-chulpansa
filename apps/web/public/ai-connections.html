@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookForge AI 연결</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5ef;
+        --surface: #fffdf8;
+        --surface-strong: #ffffff;
+        --text: #1f1c18;
+        --muted: #706a5f;
+        --line: #ded8ca;
+        --accent: #255c49;
+        --accent-soft: #dfede5;
+        --warning: #8a5a18;
+        --danger: #9d2f2f;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      button {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      .topbar {
+        max-width: 1120px;
+        margin: 0 auto 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 850;
+      }
+
+      .mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        background: var(--accent);
+        color: #fff;
+        font-size: 14px;
+      }
+
+      .topbar a:last-child,
+      .secondary {
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--muted);
+        padding: 9px 12px;
+      }
+
+      .hero {
+        max-width: 1120px;
+        margin: 0 auto 18px;
+        padding: 34px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 12px 0 12px;
+        font-size: clamp(34px, 5vw, 66px);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .hero p {
+        max-width: 720px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      .workspace {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.55fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .providers,
+      .summary {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+        padding: 20px;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+
+      .section-head p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .provider-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .provider-button {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface-strong);
+        padding: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .provider-button.active {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+
+      .provider-button strong {
+        display: block;
+        font-size: 17px;
+      }
+
+      .provider-button span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .tag {
+        align-self: start;
+        border-radius: 999px;
+        background: #f1eee6;
+        color: var(--muted);
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .provider-button.active .tag {
+        background: #fff;
+        color: var(--accent);
+      }
+
+      .summary-card {
+        border-radius: 10px;
+        background: var(--accent-soft);
+        padding: 18px;
+        margin-bottom: 14px;
+      }
+
+      .summary-card span,
+      .info-row span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 24px;
+      }
+
+      .info-list {
+        display: grid;
+        gap: 10px;
+        margin: 16px 0;
+      }
+
+      .info-row {
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+      }
+
+      .info-row strong {
+        display: block;
+        margin-top: 4px;
+        line-height: 1.45;
+      }
+
+      .actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .primary,
+      .secondary {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        padding: 11px 14px;
+        font-weight: 850;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .secondary {
+        color: var(--text);
+      }
+
+      .notice {
+        margin-top: 14px;
+        border-radius: 10px;
+        background: #1f241f;
+        color: #eef4ea;
+        min-height: 96px;
+        padding: 14px;
+        white-space: pre-wrap;
+        font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .helper {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .ready {
+        color: var(--accent);
+      }
+
+      .needs-setup {
+        color: var(--warning);
+      }
+
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid rgba(37, 92, 73, 0.22);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 900px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          padding: 14px;
+        }
+
+        .topbar {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .hero {
+          padding: 24px;
+        }
+
+        .provider-button {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="/">
+          <span class="mark">B</span>
+          <span>BookForge</span>
+        </a>
+        <a href="/">제작 데스크로 돌아가기</a>
+      </header>
+
+      <section class="hero">
+        <span class="eyebrow">AI Connection</span>
+        <h1>사용할 AI만 고르면 바로 책 만들기를 시작합니다.</h1>
+        <p>
+          복잡한 내부 설정은 BookForge가 알아서 처리합니다.
+          사용자는 OpenClaw, 로컬 AI, OpenAI API 중에서 하나만 선택하면 됩니다.
+        </p>
+      </section>
+
+      <section class="workspace">
+        <section class="providers">
+          <div class="section-head">
+            <div>
+              <h2>연결할 AI 선택</h2>
+              <p>이미 쓰고 있는 AI 환경을 선택하세요. 필요한 연결 상태만 확인합니다.</p>
+            </div>
+          </div>
+          <div class="provider-list" id="providerList"></div>
+        </section>
+
+        <aside class="summary">
+          <div class="summary-card">
+            <span>선택된 AI</span>
+            <strong id="selectedName">불러오는 중</strong>
+          </div>
+
+          <div class="info-list">
+            <div class="info-row">
+              <span>연결 방식</span>
+              <strong id="connectionType">-</strong>
+            </div>
+            <div class="info-row">
+              <span>준비 상태</span>
+              <strong id="connectionStatus">확인 중</strong>
+            </div>
+            <div class="info-row">
+              <span>다음 단계</span>
+              <strong id="nextStep">AI를 선택하세요.</strong>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="saveButton" type="button">이 AI로 사용하기</button>
+            <button class="secondary" id="testButton" type="button">연결 확인</button>
+            <a class="secondary" href="/">책 만들기 시작</a>
+          </div>
+
+          <pre class="notice" id="testLog">AI 연결 상태를 확인할 수 있습니다.</pre>
+          <p class="helper">
+            API 키와 OAuth 토큰은 이 화면에 저장하지 않습니다. OpenAI API는 서버 환경변수에 키가 있을 때만 활성화됩니다.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <script>
+      const providerOrder = ["openclaw", "local_agent", "openai", "paperclip_oauth"];
+      const providerCopy = {
+        openclaw: {
+          title: "OpenClaw 연결",
+          summary: "OpenClaw를 이미 사용 중이라면 가장 자연스러운 선택입니다.",
+          tag: "추천",
+          type: "로컬 AI 작업자",
+          nextReady: "이 AI로 저장한 뒤 제작 데스크에서 책 만들기를 시작하세요.",
+          nextSetup: "OpenClaw 실행 환경이나 어댑터가 준비되어 있어야 합니다."
+        },
+        local_agent: {
+          title: "로컬 AI 연결",
+          summary: "Codex 같은 로컬 AI 도구를 작업자로 사용합니다.",
+          tag: "로컬",
+          type: "내 컴퓨터의 AI 도구",
+          nextReady: "로컬 AI 도구가 실행 가능한 상태라면 바로 사용할 수 있습니다.",
+          nextSetup: "로컬 AI 실행 명령이 준비되어 있어야 합니다."
+        },
+        openai: {
+          title: "OpenAI API 연결",
+          summary: "서버에 OpenAI API 키를 설정해 자동으로 원고를 생성합니다.",
+          tag: "API",
+          type: "서버 API",
+          nextReady: "API 키가 확인됐습니다. 바로 책 만들기를 시작할 수 있습니다.",
+          nextSetup: "서버 환경변수 OPENAI_API_KEY를 설정한 뒤 다시 확인하세요."
+        },
+        paperclip_oauth: {
+          title: "외부 작업자 연결",
+          summary: "Paperclip 같은 외부 작업자 시스템을 연결합니다.",
+          tag: "외부",
+          type: "외부 AI 작업자",
+          nextReady: "외부 작업자 브리지가 준비되어 있으면 사용할 수 있습니다.",
+          nextSetup: "외부 작업자 브리지 설정이 필요합니다."
+        }
+      };
+
+      const roleAssignments = {
+        planner: null,
+        writer: null,
+        reviewers: null,
+        verifier: null
+      };
+
+      const state = {
+        config: null,
+        selectedProvider: "openclaw",
+        lastTest: null
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      async function request(path, options = {}) {
+        const response = await fetch(path, {
+          headers: { "content-type": "application/json" },
+          ...options
+        });
+        const text = await response.text();
+        const body = text ? JSON.parse(text) : {};
+
+        if (!response.ok && !body.status) {
+          throw new Error(body.message || body.error || text || `HTTP ${response.status}`);
+        }
+
+        return body;
+      }
+
+      function visibleProviders() {
+        return providerOrder.filter((id) => state.config?.providers?.[id]);
+      }
+
+      function selectedProvider() {
+        return state.config.providers[state.selectedProvider];
+      }
+
+      function displayName(id = state.selectedProvider) {
+        return providerCopy[id]?.title || state.config.providers[id]?.label || id;
+      }
+
+      function providerIsReady(id = state.selectedProvider) {
+        const provider = state.config.providers[id];
+        if (id === "openai") return Boolean(provider.api_key_present);
+        return Boolean(provider.adapter?.ok);
+      }
+
+      function renderProviders() {
+        $("providerList").innerHTML = visibleProviders()
+          .map((id) => {
+            const copy = providerCopy[id];
+            const active = id === state.selectedProvider ? " active" : "";
+            return `
+              <button class="provider-button${active}" type="button" data-provider="${id}">
+                <span>
+                  <strong>${escapeHtml(copy.title)}</strong>
+                  <span>${escapeHtml(copy.summary)}</span>
+                </span>
+                <span class="tag">${escapeHtml(copy.tag)}</span>
+              </button>
+            `;
+          })
+          .join("");
+
+        document.querySelectorAll("[data-provider]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.selectedProvider = button.dataset.provider;
+            state.lastTest = null;
+            render();
+          });
+        });
+      }
+
+      function renderSummary() {
+        const copy = providerCopy[state.selectedProvider];
+        const ready = providerIsReady();
+        $("selectedName").textContent = displayName();
+        $("connectionType").textContent = copy.type;
+        $("connectionStatus").textContent = ready ? "사용 가능" : "설정 필요";
+        $("connectionStatus").className = ready ? "ready" : "needs-setup";
+        $("nextStep").textContent = ready ? copy.nextReady : copy.nextSetup;
+
+        if (!state.lastTest) {
+          $("testLog").textContent =
+            state.selectedProvider === "openai" && !ready
+              ? "OpenAI API를 쓰려면 서버 환경변수 OPENAI_API_KEY가 필요합니다."
+              : "연결 확인을 누르면 현재 선택한 AI의 준비 상태를 확인합니다.";
+        }
+      }
+
+      function render() {
+        renderProviders();
+        renderSummary();
+      }
+
+      function collectPayload() {
+        const provider = selectedProvider();
+        for (const role of Object.keys(roleAssignments)) {
+          roleAssignments[role] = state.selectedProvider;
+        }
+
+        return {
+          default_provider: state.selectedProvider,
+          providers: {
+            [state.selectedProvider]: {
+              model: provider.model,
+              local_agent_name: provider.local_agent_name,
+              adapter_preset: provider.adapter_preset,
+              api_key_env: provider.api_key_env,
+              strict: provider.strict
+            }
+          },
+          assignments: roleAssignments
+        };
+      }
+
+      async function loadConfig() {
+        $("testLog").textContent = "AI 연결 정보를 불러오는 중입니다.";
+        state.config = await request("/api/runtimes");
+        state.selectedProvider = visibleProviders().includes(state.config.default_provider)
+          ? state.config.default_provider
+          : "openclaw";
+        render();
+      }
+
+      async function saveConfig() {
+        $("testLog").textContent = "선택한 AI를 저장하는 중입니다.";
+        state.config = await request("/api/runtimes", {
+          method: "PUT",
+          body: JSON.stringify(collectPayload())
+        });
+        state.selectedProvider = visibleProviders().includes(state.config.default_provider)
+          ? state.config.default_provider
+          : state.selectedProvider;
+        state.lastTest = null;
+        render();
+        $("testLog").textContent = `${displayName()}를 기본 AI로 저장했습니다.`;
+      }
+
+      async function testConnection() {
+        $("testLog").textContent = "연결 상태를 확인하는 중입니다.";
+        const result = await request("/api/runtimes/test", {
+          method: "POST",
+          body: JSON.stringify({
+            provider_id: state.selectedProvider,
+            live: false
+          })
+        });
+        state.lastTest = result;
+        $("testLog").textContent = friendlyTestMessage(result);
+        renderSummary();
+      }
+
+      function friendlyTestMessage(result) {
+        const lines = [result.ok ? "연결 준비가 됐습니다." : "추가 설정이 필요합니다.", ""];
+
+        if (state.selectedProvider === "openai") {
+          lines.push(
+            result.ok
+              ? "서버에서 OpenAI API 키를 확인했습니다."
+              : "서버 환경변수 OPENAI_API_KEY가 아직 설정되지 않았습니다."
+          );
+          lines.push("키를 설정한 뒤 서버를 다시 실행하면 바로 사용할 수 있습니다.");
+        } else if (state.selectedProvider === "openclaw") {
+          lines.push("OpenClaw 연결 방식이 준비되어 있습니다.");
+          lines.push("책 만들기를 시작하면 BookForge가 필요한 작업을 자동으로 넘깁니다.");
+        } else if (state.selectedProvider === "local_agent") {
+          lines.push("로컬 AI 연결 방식이 준비되어 있습니다.");
+          lines.push("로컬 AI 도구가 실행 가능한 상태라면 바로 사용할 수 있습니다.");
+        } else {
+          lines.push("외부 AI 작업자 연결 방식이 준비되어 있습니다.");
+          lines.push("연결된 작업자 서비스가 켜져 있으면 바로 사용할 수 있습니다.");
+        }
+
+        if (result.error) {
+          lines.push("");
+          lines.push(`오류: ${result.error}`);
+        }
+
+        return lines.join("\n");
+      }
+
+      $("saveButton").addEventListener("click", () =>
+        saveConfig().catch((error) => {
+          $("testLog").textContent = error.message;
+        })
+      );
+
+      $("testButton").addEventListener("click", () =>
+        testConnection().catch((error) => {
+          $("testLog").textContent = error.message;
+        })
+      );
+
+      loadConfig().catch((error) => {
+        $("testLog").textContent = error.message;
+      });
+    </script>
+  </body>
+</html>

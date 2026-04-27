@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+config/runtime.local.json
+.codex/
+.playwright-cli/
+books/
+output/
+test-results/
+new2/
+new3/
+*.log
+.bookforge-*
+.bookforge-dev.*
+.DS_Store
+Thumbs.db

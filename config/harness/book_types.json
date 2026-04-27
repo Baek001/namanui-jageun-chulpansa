@@ -1,0 +1,111 @@
+{
+  "supported_book_types": [
+    {
+      "id": "professional_book",
+      "label": "전문서적",
+      "first_user_choice": "실무자와 전문가를 위한 문제 해결형 책",
+      "required_outputs": [
+        "book_intent.md",
+        "reader_profile.md",
+        "style_direction.md",
+        "rigor_profile.md",
+        "samples/sample_01.md",
+        "harness_plan.md",
+        "quality_rubric.md",
+        "final_outline.md",
+        "chapter_briefs/ch01.md",
+        "manuscript/ch01/approved.md",
+        "exports/book.md"
+      ],
+      "sample_requirements": [
+        "field problem",
+        "reader decision context",
+        "core framework",
+        "worked case",
+        "professional checklist",
+        "evidence-needed markers"
+      ],
+      "chapter_requirements": [
+        "problem framing",
+        "decision criteria",
+        "case or scenario",
+        "implementation guidance",
+        "risks and limits",
+        "action checklist"
+      ],
+      "verifiers": [
+        "fact_checker",
+        "structural_editor",
+        "style_verifier",
+        "evidence_verifier",
+        "field_relevance_verifier"
+      ],
+      "quality_thresholds": {
+        "average_score": 8,
+        "accuracy": 8,
+        "field_relevance": 8,
+        "case_quality": 8,
+        "evidence_discipline": 7,
+        "actionability": 8,
+        "blocking_issues": 0
+      }
+    },
+    {
+      "id": "university_textbook",
+      "label": "대학교재",
+      "first_user_choice": "대학 또는 대학원 수업에 사용할 전공 교재",
+      "required_outputs": [
+        "book_intent.md",
+        "reader_profile.md",
+        "style_direction.md",
+        "rigor_profile.md",
+        "samples/sample_01.md",
+        "harness_plan.md",
+        "quality_rubric.md",
+        "final_outline.md",
+        "chapter_briefs/ch01.md",
+        "manuscript/ch01/approved.md",
+        "exports/book.md"
+      ],
+      "sample_requirements": [
+        "course context",
+        "learning objectives",
+        "prerequisite assumptions",
+        "core concept explanation",
+        "worked example",
+        "practice questions"
+      ],
+      "chapter_requirements": [
+        "learning objectives",
+        "prerequisites",
+        "concept explanation",
+        "worked example",
+        "practice problems",
+        "summary and assessment prompts"
+      ],
+      "verifiers": [
+        "fact_checker",
+        "structural_editor",
+        "pedagogy_verifier",
+        "style_verifier",
+        "reader_level_verifier"
+      ],
+      "quality_thresholds": {
+        "average_score": 8,
+        "accuracy": 8,
+        "pedagogy": 8,
+        "reader_fit": 8,
+        "example_quality": 8,
+        "practice_quality": 8,
+        "blocking_issues": 0
+      }
+    }
+  ],
+  "global_stop_conditions": [
+    "same blocking issue appears twice",
+    "average score does not improve after two revisions",
+    "required evidence cannot be supplied",
+    "book type no longer matches professional_book or university_textbook",
+    "human changes the approved sample direction"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "presets": {
+    "codex": {
+      "label": "Codex CLI",
+      "description": "Runs a local Codex CLI session against one BookForge task bundle.",
+      "command_template": "codex exec --full-auto \"Read the prompt file at {prompt}. Write only the finished Markdown artifact to {result}. Put brief execution notes in {notes}.\""
+    },
+    "openclaw": {
+      "label": "OpenClaw CLI",
+      "description": "Placeholder command shape for an OpenClaw-style local agent CLI.",
+      "command_template": "openclaw run --task {task_json_arg} --prompt {prompt_arg} --output {result_arg}"
+    },
+    "claude-code": {
+      "label": "Claude Code CLI",
+      "description": "Runs a Claude Code-style CLI with the prompt file and expected result path.",
+      "command_template": "claude -p \"Read the prompt file at {prompt}. Complete the task and write the final Markdown to {result}.\""
+    },
+    "paperclip-oauth": {
+      "label": "Paperclip OAuth Worker",
+      "description": "Placeholder command shape for a Paperclip-style authenticated worker bridge.",
+      "command_template": "paperclip tasks run --task {task_json_arg} --input {prompt_arg} --output {result_arg}"
+    }
+  }
+}

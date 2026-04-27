@@ -1,0 +1,23 @@
+name: bookforge
+
+services:
+  bookforge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bookforge:local
+    container_name: bookforge
+    ports:
+      - "${BOOKFORGE_PORT:-3100}:3000"
+    environment:
+      PORT: "3000"
+      BOOKFORGE_BOOKS_ROOT: /data/books
+      BOOKFORGE_CONFIG_ROOT: /app/config
+      BOOKFORGE_MODEL_PROVIDER: ${BOOKFORGE_MODEL_PROVIDER:-mock}
+      BOOKFORGE_MOCK_MODEL: ${BOOKFORGE_MOCK_MODEL:-deterministic-mock}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+    volumes:
+      - ./books:/data/books
+      - ./config:/app/config:ro
+    restart: unless-stopped

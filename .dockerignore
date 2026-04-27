@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+books
+output
+.codex
+.git
+.gitignore
+*.log
+.bookforge-dev.*
+Dockerfile
+docker-compose.yml
