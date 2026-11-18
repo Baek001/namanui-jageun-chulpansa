@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">나만의 작은 출판사 서비스 흐름</title>
+  <desc id="desc">사용자가 AI를 연결하고 메인 에이전트와 책 방향을 논의한 뒤, 구조 설계, 원고 작성, 서브에이전트 보강, 검증 게이트, 반복 수정, 출판 파일 생성으로 이어지는 과정을 설명하는 다이어그램입니다.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f4ef; }
+      .ink { fill: #1f2933; }
+      .muted { fill: #68717c; }
+      .soft { fill: #8a949f; }
+      .accent { fill: #2f6f73; }
+      .accentStroke { stroke: #2f6f73; }
+      .panel { fill: #fffdf8; stroke: #ded7ca; stroke-width: 2; }
+      .node { fill: #ffffff; stroke: #d8d2c7; stroke-width: 2; }
+      .nodeTint { fill: #eef6f4; stroke: #9fc8c2; stroke-width: 2; }
+      .gate { fill: #fff8e6; stroke: #d5a94d; stroke-width: 2; }
+      .export { fill: #edf3ff; stroke: #8aa6db; stroke-width: 2; }
+      .loop { fill: #fff0eb; stroke: #d38d76; stroke-width: 2; }
+      .line { fill: none; stroke: #5e6b75; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .lineAccent { fill: none; stroke: #2f6f73; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .lineLoop { fill: none; stroke: #c46f55; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 10 10; }
+      .title { font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 54px; font-weight: 800; letter-spacing: 0; }
+      .subtitle { font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 22px; font-weight: 500; letter-spacing: 0; }
+      .label { font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 18px; font-weight: 800; letter-spacing: 0; }
+      .body { font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 19px; font-weight: 500; letter-spacing: 0; }
+      .small { font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 0; }
+      .tiny { font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0; }
+      .badge { fill: #1f2933; }
+      .badgeText { fill: #fffdf8; font-family: "Pretendard", "Noto Sans KR", "Inter", "Arial", sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 0; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5e6b75"/>
+    </marker>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6f73"/>
+    </marker>
+    <marker id="arrowLoop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c46f55"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="900"/>
+
+  <text class="title ink" x="86" y="98">나만의 작은 출판사</text>
+  <text class="subtitle muted" x="88" y="138">AI를 고르는 화면은 단순하게, 책 제작 품질은 에이전트 루프가 책임지는 출판 워크스튜디오</text>
+
+  <g transform="translate(1180 70)">
+    <rect x="0" y="0" width="318" height="72" rx="18" fill="#ffffff" stroke="#ded7ca" stroke-width="2"/>
+    <circle cx="38" cy="36" r="13" fill="#2f6f73"/>
+    <text class="label ink" x="64" y="31">사용자는 AI만 연결</text>
+    <text class="small muted" x="64" y="54">역할 배치는 시스템이 자동 처리</text>
+  </g>
+
+  <rect class="panel" x="80" y="188" width="1440" height="166" rx="24"/>
+  <text class="label accent" x="116" y="233">사용자에게 보이는 간단한 흐름</text>
+
+  <g transform="translate(122 260)">
+    <rect class="nodeTint" x="0" y="0" width="245" height="62" rx="16"/>
+    <text class="body ink" x="24" y="27">AI 연결</text>
+    <text class="small muted" x="24" y="49">OpenClaw, Local, OpenAI</text>
+  </g>
+
+  <path class="line" d="M 390 291 L 472 291" marker-end="url(#arrow)"/>
+
+  <g transform="translate(496 260)">
+    <rect class="nodeTint" x="0" y="0" width="260" height="62" rx="16"/>
+    <text class="body ink" x="24" y="27">책 만들기 대화</text>
+    <text class="small muted" x="24" y="49">주제, 독자, 톤, 목표 정리</text>
+  </g>
+
+  <path class="line" d="M 780 291 L 862 291" marker-end="url(#arrow)"/>
+
+  <g transform="translate(886 260)">
+    <rect class="nodeTint" x="0" y="0" width="245" height="62" rx="16"/>
+    <text class="body ink" x="24" y="27">중간 승인</text>
+    <text class="small muted" x="24" y="49">구조와 샘플을 보고 결정</text>
+  </g>
+
+  <path class="line" d="M 1155 291 L 1237 291" marker-end="url(#arrow)"/>
+
+  <g transform="translate(1261 260)">
+    <rect class="nodeTint" x="0" y="0" width="205" height="62" rx="16"/>
+    <text class="body ink" x="24" y="27">출판 파일</text>
+    <text class="small muted" x="24" y="49">원고, 리뷰, 내보내기</text>
+  </g>
+
+  <rect class="panel" x="80" y="395" width="1440" height="395" rx="28"/>
+  <text class="label accent" x="116" y="440">시스템 내부 제작 루프</text>
+  <text class="small muted" x="116" y="464">메인 에이전트가 프로젝트 상태를 관리하고, 서브에이전트는 정해진 역할로 원고 품질을 끌어올립니다.</text>
+
+  <g transform="translate(115 515)">
+    <rect class="node" x="0" y="0" width="220" height="145" rx="18"/>
+    <rect class="badge" x="22" y="22" width="58" height="24" rx="12"/>
+    <text class="badgeText" x="40" y="39">01</text>
+    <text class="label ink" x="22" y="73">출판 상담</text>
+    <text class="small muted" x="22" y="101">메인 에이전트와</text>
+    <text class="small muted" x="22" y="123">어떤 책을 만들지 논의</text>
+  </g>
+
+  <path class="lineAccent" d="M 350 588 L 418 588" marker-end="url(#arrowAccent)"/>
+
+  <g transform="translate(440 515)">
+    <rect class="node" x="0" y="0" width="220" height="145" rx="18"/>
+    <rect class="badge" x="22" y="22" width="58" height="24" rx="12"/>
+    <text class="badgeText" x="40" y="39">02</text>
+    <text class="label ink" x="22" y="73">구조 설계</text>
+    <text class="small muted" x="22" y="101">목차, 독자 프로필,</text>
+    <text class="small muted" x="22" y="123">샘플 방향을 확정</text>
+  </g>
+
+  <path class="lineAccent" d="M 675 588 L 743 588" marker-end="url(#arrowAccent)"/>
+
+  <g transform="translate(765 515)">
+    <rect class="node" x="0" y="0" width="220" height="145" rx="18"/>
+    <rect class="badge" x="22" y="22" width="58" height="24" rx="12"/>
+    <text class="badgeText" x="40" y="39">03</text>
+    <text class="label ink" x="22" y="73">원고 작성</text>
+    <text class="small muted" x="22" y="101">챕터 브리프와 기준에</text>
+    <text class="small muted" x="22" y="123">맞춰 초안을 생성</text>
+  </g>
+
+  <path class="lineAccent" d="M 1000 588 L 1068 588" marker-end="url(#arrowAccent)"/>
+
+  <g transform="translate(1090 500)">
+    <rect class="node" x="0" y="0" width="260" height="174" rx="18"/>
+    <rect class="badge" x="22" y="22" width="58" height="24" rx="12"/>
+    <text class="badgeText" x="40" y="39">04</text>
+    <text class="label ink" x="22" y="73">서브에이전트 보강</text>
+    <text class="small muted" x="22" y="103">팩트체커 · 구조 편집자</text>
+    <text class="small muted" x="22" y="126">스타일 편집자 · 교육 검토자</text>
+    <text class="small muted" x="22" y="149">서로 검토해 품질을 개선</text>
+  </g>
+
+  <path class="lineAccent" d="M 1365 588 L 1418 588" marker-end="url(#arrowAccent)"/>
+
+  <g transform="translate(1390 481)">
+    <path class="gate" d="M 64 0 L 128 64 L 64 128 L 0 64 Z"/>
+    <text class="label ink" x="38" y="54">검증</text>
+    <text class="label ink" x="38" y="81">게이트</text>
+  </g>
+
+  <g transform="translate(1376 635)">
+    <rect class="gate" x="0" y="0" width="150" height="76" rx="16"/>
+    <text class="small muted" x="18" y="28">정확성 · 명료성</text>
+    <text class="small muted" x="18" y="50">구조 · 차단 이슈</text>
+  </g>
+
+  <path class="lineAccent" d="M 1454 481 L 1454 418 L 1260 418 L 1260 458" marker-end="url(#arrowAccent)"/>
+  <text class="tiny accent" x="1272" y="411">기준 충족: 다음 단계</text>
+
+  <g transform="translate(1110 402)">
+    <rect class="export" x="0" y="0" width="138" height="58" rx="14"/>
+    <text class="small ink" x="20" y="25">출판 산출물</text>
+    <text class="tiny muted" x="20" y="43">원고 · 리뷰 · 내보내기</text>
+  </g>
+
+  <path class="lineLoop" d="M 1454 711 L 1454 755 L 875 755 L 875 676" marker-end="url(#arrowLoop)"/>
+  <text class="tiny" x="1036" y="746" fill="#c46f55">기준 미달: 수정 계획 생성 후 다시 작성/보강</text>
+
+  <g transform="translate(585 707)">
+    <rect class="loop" x="0" y="0" width="310" height="50" rx="15"/>
+    <text class="small" x="22" y="31" fill="#9b4e38">반복 제한 또는 충돌 시 사용자에게 승인 요청</text>
+  </g>
+
+  <g transform="translate(114 808)">
+    <rect x="0" y="0" width="1372" height="44" rx="14" fill="#ffffff" stroke="#ded7ca" stroke-width="2"/>
+    <circle cx="28" cy="22" r="7" fill="#2f6f73"/>
+    <text class="small ink" x="48" y="28">핵심 메시지: 사용자는 복잡한 역할 설정을 만지지 않고 AI만 연결합니다. 서비스는 상담, 구조화, 작성, 다중 검토, 검증, 반복 수정을 하나의 책 제작 과정으로 묶습니다.</text>
+  </g>
+</svg>
